@@ -8,4 +8,18 @@ function App(){
     const [input, setInput] = useState("");
     const [name, setName] = useState("");
     const [gameId,setGameId] = useState("game1");
+
+
+    useEffect(() => {
+        const socket = new WebSocket(WS_URL);
+        socket.onopen = () => console.log("Connected to WS");
+            socket.onmessage = (msg) => {
+                const data = JSON.parse(msg.data);
+                if(data.type === "NEW_MESSAGE"){
+                    setMessages(prev => [...prev, {sender: data.sender, message: data.message}]);
+                }
+            };
+            setWs(socket);
+    }, []);
+    
 }
