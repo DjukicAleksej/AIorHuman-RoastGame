@@ -101,7 +101,7 @@ async function generateAIResponse(messages){
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: 'qwen/qwen3-32b',
+      model: 'x-ai/grok-4.1-fast',
       stream: false,
       temperature: 0.9,
       max_tokens: 500,
