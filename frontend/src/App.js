@@ -40,5 +40,13 @@ function App(){
         }));
         setInput("");
     };
-
+return (
+    <div style={{padding: "2rem"}}>
+    <h1>Roast Game</h1>
+    <div>
+        <input placeholder='Your Name' value={name} onChange={(e) => setName(e.target.value)} />
+        <button onClick={joinGame}>Join Game</button>
+    </div>
+    </div>
+)
 }
