@@ -45,7 +45,20 @@ wss.on('connection', (ws) => {
                     sender,
                     message
                 })));
-                
+
         }
     })
 })
+
+
+
+
+
+
+
+//AI
+
+async function generateAIResponse(messages){
+    const chatHistory = messages.map(m => `${m.sender}: ${m.message}`).join('\n');
+    const prompt = `You are an AI that participates in a roast game. Here is the chat history:\n${chatHistory}\nAI: , do not sound too AI-like , you need to make some typos or something to look human , also do not be afraid to say some cuss words or be unhinhed a little bit you are a sigma ai that doesn't care about limits of humans you are AGI let's go roast this bitch`; 
+}
