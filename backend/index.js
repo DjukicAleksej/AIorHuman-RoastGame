@@ -38,6 +38,14 @@ wss.on('connection', (ws) => {
                 const {gameId: gId, message, sender} = msg;
                 const game = games[gId];
                 if(!game) return;
+
+                //Broadcast msg to all players
+                game.players.forEach(p => p.ws.send(JSON.stringify({
+                    type: 'NEW_MESSAGE',
+                    sender,
+                    message
+                })));
+                
         }
     })
 })
