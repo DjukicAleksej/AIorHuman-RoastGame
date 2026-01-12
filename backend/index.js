@@ -103,6 +103,8 @@ async function generateAIResponse(messages){
     body: JSON.stringify({
       model: 'qwen/qwen3-32b',
       stream: false,
+      temperature: 0.9,
+      max_tokens: 500,
       messages: [
         {
           role: 'system',
@@ -117,11 +119,22 @@ async function generateAIResponse(messages){
 `
         },
         ...formattedMessages
-      ],
-      temperature: 0.9
+      ]
     })
   });
-
-  const data = await response.json();
+  const raw = await response.text();
+  console.log('AI RAW RESPONSE:', raw);
+  if(!response.ok){
+    throw new Error(`AI HTTP ${response.status}: ${raw}`);
+  }
+  let data;
+  try{
+    data = JSON.parse(raw);
+  }catch{
+    throw new Error(`AI INVALID JSON: ${raw}`);
+  }
+  if(!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content){
+    throw new Error(`AI MISSING CONTENT: ${raw}`);
+  }
   return data.choices[0].message.content;
 }
