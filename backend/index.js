@@ -32,7 +32,12 @@ wss.on('connection', (ws) => {
                 if(!games[gameId]) games[gameId] = {players: [],messages: [],ai: isAI};
                 games[gameId].players.push({ws, name: playerName, isAI});
                 ws.send(JSON.stringify({type: 'JOINED', gameId}));
-                break;
+            break;
+
+            case 'SEND_MESSAGE':
+                const {gameId: gId, message, sender} = msg;
+                const game = games[gId];
+                if(!game) return;
         }
     })
 })
