@@ -21,5 +21,24 @@ function App(){
             };
             setWs(socket);
     }, []);
-    
+    const joinGame = () => {
+            ws.send(JSON.stringify({
+                type: 'JOIN_GAME',
+                gameId,
+                playerName: name,
+                isAI: false
+            }));
+    }
+
+    const sendMessage = () => {
+        if(!input) return;
+        ws.send(JSON.stringify({
+            type: "SEND_MESSAGE",
+            gameId,
+            message: input,
+            sender: name
+        }));
+        setInput("");
+    };
+
 }
