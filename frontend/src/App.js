@@ -8,6 +8,7 @@ function App(){
     const [input, setInput] = useState("");
     const [name, setName] = useState("");
     const [gameId,setGameId] = useState("game1");
+    const [joined, setJoined] = useState(false);
 
 
     useEffect(() => {
@@ -22,12 +23,13 @@ function App(){
             setWs(socket);
     }, []);
     const joinGame = () => {
+        if(joined) return;
             ws.send(JSON.stringify({
                 type: 'JOIN_GAME',
                 gameId,
                 playerName: name,
-                isAI: false
             }));
+        setJoined(true);
     }
 
     const sendMessage = () => {
@@ -45,7 +47,7 @@ return (
     <h1>Roast Game</h1>
     <div>
         <input placeholder='Your Name' value={name} onChange={(e) => setName(e.target.value)} />
-        <button onClick={joinGame}>Join Game</button>
+        <button onClick={joinGame} disabled={joined}>{joined ? "Joined" : "Join Game"}</button>
     </div>
     <div style={{border: "1px solid black", padding: "1rem", marginTop: "1rem", height: "300px", overflowY: "scroll"}}>
         {messages.map((m,i) =>(
