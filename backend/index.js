@@ -22,4 +22,17 @@ const games = {}; // gameid: { players: [], roasts: [] }
 
 wss.on('connection', (ws) => {
     console.log('New client connected');
+
+    ws.on('message', async (data) => {
+        const msg = JSON.parse(data);
+
+        switch(msg.type){
+            case 'JOIN_GAME':
+                const {gameId, playerName, isAI} = msg;
+                if(!games[gameId]) games[gameId] = {players: [],messages: [],ai: isAI};
+                games[gameId].players.push({ws, name: playerName, isAI});
+                ws.send(JSON.stringify({type: 'JOINED', gameId}));
+                break;
+        }
+    })
 })
