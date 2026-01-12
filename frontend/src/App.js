@@ -47,6 +47,22 @@ return (
         <input placeholder='Your Name' value={name} onChange={(e) => setName(e.target.value)} />
         <button onClick={joinGame}>Join Game</button>
     </div>
+    <div style={{border: "1px solid black", padding: "1rem", marginTop: "1rem", height: "300px", overflowY: "scroll"}}>
+        {messages.map((m,i) =>(
+            <div key={i}><b>{m.sender}:</b> {m.message}</div>
+        ))}
     </div>
-)
+
+    <input
+    value={input}
+    onChange={(e) => setInput(e.target.value)}
+    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+    placeholder="Write your roast..."
+    />
+    <button onClick={sendMessage}>Send</button>
+
+    </div>
+);
 }
+
+export default App;
