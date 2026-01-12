@@ -59,6 +59,34 @@ wss.on('connection', (ws) => {
 //AI
 
 async function generateAIResponse(messages){
-    const chatHistory = messages.map(m => `${m.sender}: ${m.message}`).join('\n');
-    const prompt = `You are an AI that participates in a roast game. Here is the chat history:\n${chatHistory}\nAI: , do not sound too AI-like , you need to make some typos or something to look human , also do not be afraid to say some cuss words or be unhinhed a little bit you are a sigma ai that doesn't care about limits of humans you are AGI let's go roast this bitch`; 
+    const formattedMessages = messages.map(m => ({role: m.sender === 'AI' ? 'assistant' : 'user', content: m.message}));
+     const response = await fetch('https://ai.hackclub.com/proxy/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.HC_AI_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'x-ai/grok-4.1-fast',
+      messages: [
+        {
+          role: 'system',
+          content: `
+                You are playing a roast game.
+                Rules:
+                - 2-3 sentences max
+                - Be witty, slightly aggressive but playful
+                - Occasionally make small typos or slang
+                - Do NOT sound like an AI
+                -Be unhinged roast like a real human would make it playful don't be afraid to cuss make it as realistic to human as possible
+`
+        },
+        ...formattedMessages
+      ],
+      temperature: 0.9
+    })
+  });
+
+  const data = await response.json();
+  return data.choices[0].message.content;
 }
