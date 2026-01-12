@@ -21,34 +21,53 @@ const wss = new WebSocketServer({ server });
 const games = {}; // gameid: { players: [], roasts: [] }
 
 wss.on('connection', (ws) => {
-    console.log('New client connected');
+  console.log('New client connected');
 
-    ws.on('message', async (data) => {
-        const msg = JSON.parse(data);
+  ws.on('message', async (data) => {
+    const msg = JSON.parse(data);
 
-        switch(msg.type){
-            case 'JOIN_GAME':
-                const {gameId, playerName, isAI} = msg;
-                if(!games[gameId]) games[gameId] = {players: [],messages: [],ai: isAI};
-                games[gameId].players.push({ws, name: playerName, isAI});
-                ws.send(JSON.stringify({type: 'JOINED', gameId}));
-            break;
+    switch (msg.type) {
+      case 'JOIN_GAME':
+        const { gameId, playerName, isAI } = msg;
+        if (!games[gameId]) games[gameId] = { players: [], messages: [], ai: isAI };
+        games[gameId].players.push({ ws, name: playerName, isAI });
+        ws.send(JSON.stringify({ type: 'JOINED', gameId }));
+        break;
 
-            case 'SEND_MESSAGE':
-                const {gameId: gId, message, sender} = msg;
-                const game = games[gId];
-                if(!game) return;
+      case 'SEND_MESSAGE':
+        const { gameId: gId, message, sender } = msg;
+        const game = games[gId];
+        if (!game) return;
 
-                //Broadcast msg to all players
-                game.players.forEach(p => p.ws.send(JSON.stringify({
-                    type: 'NEW_MESSAGE',
-                    sender,
-                    message
-                })));
+        // Broadcast message to all players
+        game.players.forEach(p => p.ws.send(JSON.stringify({
+          type: 'NEW_MESSAGE',
+          sender,
+          message
+        })));
 
+        // If AI player exists, generate response
+        if (game.ai) {
+          const aiMsg = await generateAIResponse(game.messages.concat({ sender, message }));
+          // Broadcast AI message
+          game.players.forEach(p => p.ws.send(JSON.stringify({
+            type: 'NEW_MESSAGE',
+            sender: 'AI',
+            message: aiMsg
+          })));
         }
-    })
-})
+
+        // Store message
+        game.messages.push({ sender, message });
+        break;
+
+      default:
+        console.log('Unknown message type:', msg.type);
+    }
+  });
+
+  ws.on('close', () => console.log('Client disconnected'));
+});
 
 
 
