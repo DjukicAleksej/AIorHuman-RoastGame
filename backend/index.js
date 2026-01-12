@@ -14,3 +14,12 @@ app.get('/', (req, res) => {
 const server = app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 })
+
+//websocket server
+const wss = new WebSocketServer({ server });
+
+const games = {}; // gameid: { players: [], roasts: [] }
+
+wss.on('connection', (ws) => {
+    console.log('New client connected');
+})
