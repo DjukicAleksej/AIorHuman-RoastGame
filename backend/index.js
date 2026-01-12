@@ -29,7 +29,7 @@ wss.on('connection', (ws) => {
     switch (msg.type) {
       case 'JOIN_GAME':
         const { gameId, playerName, isAI } = msg;
-        if (!games[gameId]) games[gameId] = { players: [], messages: [], ai: isAI };
+        if (!games[gameId]) games[gameId] = { players: [], messages: [], hasAI: true };
         games[gameId].players.push({ ws, name: playerName, isAI });
         ws.send(JSON.stringify({ type: 'JOINED', gameId }));
         break;
@@ -47,8 +47,9 @@ wss.on('connection', (ws) => {
         })));
 
         // If AI player exists, generate response
-        if (game.ai) {
-          const aiMsg = await generateAIResponse(game.messages.concat({ sender, message }));
+        if (game.hasAI) {
+          const aiMsg = await generateAIResponse([...game.messages, { sender, message }]);
+          games.messages.push({ sender: 'AI', message: aiMsg });
           // Broadcast AI message
           game.players.forEach(p => p.ws.send(JSON.stringify({
             type: 'NEW_MESSAGE',
