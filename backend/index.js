@@ -1,3 +1,6 @@
+const fetch = (...args) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(...args));
+
 require('dotenv').config();
 const express = require('express');
 const { WebSocketServer } = require('ws');
@@ -34,33 +37,44 @@ wss.on('connection', (ws) => {
         ws.send(JSON.stringify({ type: 'JOINED', gameId }));
         break;
 
-      case 'SEND_MESSAGE':
-        const { gameId: gId, message, sender } = msg;
-        const game = games[gId];
-        if (!game) return;
+      case 'SEND_MESSAGE': {
+  const { gameId: gId, message, sender } = msg;
+  const game = games[gId];
+  if (!game) return;
 
-        // Broadcast message to all players
-        game.players.forEach(p => p.ws.send(JSON.stringify({
+  // save human message
+  game.messages.push({ sender, message });
+
+  // broadcast human message
+  game.players.forEach(p =>
+    p.ws.send(JSON.stringify({
+      type: 'NEW_MESSAGE',
+      sender,
+      message
+    }))
+  );
+
+  // AI response
+  if (game.hasAI) {
+    try {
+      const aiMsg = await generateAIResponse(game.messages);
+
+      game.messages.push({ sender: 'AI', message: aiMsg });
+
+      game.players.forEach(p =>
+        p.ws.send(JSON.stringify({
           type: 'NEW_MESSAGE',
-          sender,
-          message
-        })));
+          sender: 'AI',
+          message: aiMsg
+        }))
+      );
+    } catch (err) {
+      console.error('AI ERROR:', err);
+    }
+  }
 
-        // If AI player exists, generate response
-        if (game.hasAI) {
-          const aiMsg = await generateAIResponse([...game.messages, { sender, message }]);
-          games.messages.push({ sender: 'AI', message: aiMsg });
-          // Broadcast AI message
-          game.players.forEach(p => p.ws.send(JSON.stringify({
-            type: 'NEW_MESSAGE',
-            sender: 'AI',
-            message: aiMsg
-          })));
-        }
-
-        // Store message
-        game.messages.push({ sender, message });
-        break;
+  break;
+}
 
       default:
         console.log('Unknown message type:', msg.type);
