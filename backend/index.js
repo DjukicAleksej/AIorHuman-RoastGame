@@ -36,8 +36,33 @@ wss.on('connection', (ws) => {
         if (!games[gameId]) games[gameId] = { players: [], messages: [], hasAI: true };
         games[gameId].players.push({ ws, name: playerName, isAI });
         ws.send(JSON.stringify({ type: 'JOINED', gameId }));
-        break;
+      break;
 
+      case "START_GAME": {
+        if(waitingPlayer){
+          const gameId = crypto.randomUUID();
+
+          games[gameId] = {
+            players: [
+              {ws: waitingPlayer.ws, type: 'human'},
+              {ws, type: 'human'}
+            ],
+            hasAI: false,
+            messages: []
+          };
+          waitingPlayer.ws.send(JSON.stringify({
+            type: "GAME_START",
+            gameId
+          }));
+
+          ws.send(JSON.stringify({
+            type: "GAME_START",
+            gameId
+          }));
+
+          
+        }
+      }
       case 'SEND_MESSAGE': {
   const { gameId: gId, message, sender } = msg;
   const game = games[gId];
