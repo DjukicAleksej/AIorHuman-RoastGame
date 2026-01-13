@@ -2,9 +2,9 @@ const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 require('dotenv').config();
+const crypto = require("crypto");
 const express = require('express');
 const { WebSocketServer } = require('ws');
-const OpenAI = require('openai');
 
 const app = express();
 const port = 5000;
@@ -60,8 +60,33 @@ wss.on('connection', (ws) => {
             gameId
           }));
 
-          
+          waitingPlayer = null;
         }
+        else {
+          waitingPlayer = { ws};
+          ws.send(JSON.stringify({
+            type: "STATUS",
+            text: "Finding opponent..."
+          }));
+
+
+          setTimeout(() => {
+            if(waitingPlayer?.ws === ws) {
+              const gameId = crypto.randomUUID();
+              games[gameId] = {
+                players: [{ws,type: 'human'}],
+                hasAI: true,
+                messages: []
+              };
+              ws.send(JSON.stringify({
+                type: "GAME_START",
+                gameId
+              }));
+              waitingPlayer = null;
+            }
+          }, 5000);
+        }
+        break;
       }
       case 'SEND_MESSAGE': {
   const { gameId: gId, message, sender } = msg;
