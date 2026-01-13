@@ -53,7 +53,8 @@ wss.on('connection', (ws) => {
             messages: [],
             phase: "CHAT",
             guessDeadline: Date.now() + GUESS_TIME,
-            quesses: {}
+            quesses: {},
+            correctAnswer: "human"
           };
           setTimeout(() => {
             const game = games[gameId];
