@@ -45,6 +45,11 @@ function App(){
 return (
     <div style={{padding: "2rem"}}>
     <h1>Roast Game</h1>
+    <button onClick={() => {
+        ws.send(JSON.stringify({type: "START_GAME"}));
+    }}>
+        Start Game
+    </button>
     <div>
         <input placeholder='Your Name' value={name} onChange={(e) => setName(e.target.value)} />
         <button onClick={joinGame} disabled={joined}>{joined ? "Joined" : "Join Game"}</button>

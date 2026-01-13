@@ -22,6 +22,7 @@ const server = app.listen(port, () => {
 const wss = new WebSocketServer({ server });
 
 const games = {}; // gameid: { players: [], roasts: [] }
+let waitingPlayer = null;
 
 wss.on('connection', (ws) => {
   console.log('New client connected');
