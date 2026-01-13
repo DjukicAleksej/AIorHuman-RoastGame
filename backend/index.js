@@ -6,6 +6,8 @@ const crypto = require("crypto");
 const express = require('express');
 const { WebSocketServer } = require('ws');
 
+
+const GUESS_TIME = 30_000; // time until the player has to quess
 const app = express();
 const port = 5000;
 
@@ -44,20 +46,25 @@ wss.on('connection', (ws) => {
 
           games[gameId] = {
             players: [
-              {ws: waitingPlayer.ws, type: 'human'},
-              {ws, type: 'human'}
+              {ws: waitingPlayer.ws, type: 'human', id: crypto.randomUUID()},
+              {ws, type: 'human', id: crypto.randomUUID()}
             ],
             hasAI: false,
-            messages: []
+            messages: [],
+            phase: "CHAT",
+            guessDeadline: Date.now() + GUESS_TIME,
+            quesses: {}
           };
           waitingPlayer.ws.send(JSON.stringify({
             type: "GAME_START",
-            gameId
+            gameId,
+            guessTime: 30
           }));
 
           ws.send(JSON.stringify({
             type: "GAME_START",
-            gameId
+            gameId,
+            guessTime: 30
           }));
 
           waitingPlayer = null;
