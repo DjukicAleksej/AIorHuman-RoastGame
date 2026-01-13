@@ -155,7 +155,7 @@ async function generateAIResponse(messages){
       model: 'x-ai/grok-4.1-fast',
       stream: false,
       temperature: 0.9,
-      max_tokens: 500,
+      max_tokens: 100,
       messages: [
         {
           role: 'system',

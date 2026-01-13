@@ -19,6 +19,9 @@ function App(){
                 if(data.type === "NEW_MESSAGE"){
                     setMessages(prev => [...prev, {sender: data.sender, message: data.message}]);
                 }
+                if(data.type === "GAME_START") {
+                    console.log("Game started with ID:", data.gameId);
+                }
             };
             setWs(socket);
     }, []);
