@@ -55,6 +55,16 @@ wss.on('connection', (ws) => {
             guessDeadline: Date.now() + GUESS_TIME,
             quesses: {}
           };
+          setTimeout(() => {
+            const game = games[gameId];
+            if(!game) return;
+            game.phase = "GUESS";
+            game.players.forEach(p => 
+              p.ws.send(JSON.stringify({
+                type: "GUESS_PHASE"
+              }))
+            );
+          }, GUESS_TIME);
           waitingPlayer.ws.send(JSON.stringify({
             type: "GAME_START",
             gameId,
