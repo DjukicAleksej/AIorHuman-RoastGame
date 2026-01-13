@@ -119,6 +119,13 @@ wss.on('connection', (ws) => {
         break;
       }
       case 'SEND_MESSAGE': {
+        if(game.phase !== "CHAT"){
+          ws.send(JSON.stringify({
+            type: "ERROR",
+            message : "Chat phase is over"
+          }));
+          return;
+        }
   const { gameId: gId, message, sender } = msg;
   const game = games[gId];
   if (!game) return;
