@@ -40,4 +40,27 @@ export default function App(){
     const startGame = () => {
         ws.send(JSON.stringify({type: "START_GAME"}));
     };
+
+    const sendMessage = () => {
+        if(!input) return;
+        ws.send(JSON.stringify({
+            type: "SEND_MESSAGE",
+            gameId,
+            sender: name,
+            message: input,
+        }));
+        setInput("");
+    };
+
+    const submitGuess = (guess) => {
+        ws.send(JSON.stringify({
+            type: "SUBMIT_GUESS",
+            gameId,
+            guess,
+        }));
+
+    };
+
+    
+    
 }
