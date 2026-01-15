@@ -61,6 +61,20 @@ export default function App(){
 
     };
 
-    
+    return (
+        <div className="app">
+            <h1 className="title">🤡 AI or Human?</h1>
+            {phase === "LOBBY" && (
+                <div className="card">
+                    <input
+                        placeholder="Your name"
+                        value={name}
+                        onChange={(e)=> setName(e.target.value)} />
+                        <button onClick={startGame}>Start Game</button>
+                        </div>
+            )}
+        </div>
+    )
+
     
 }
