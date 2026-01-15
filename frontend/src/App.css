@@ -31,4 +31,19 @@ body {
     gap: 0.75rem;
 }
 
+input {
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
 
+button {
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #6e56cf;
+    color: white;
+    font-weight: bold;
+}
