@@ -39,7 +39,21 @@ wss.on('connection', (ws) => {
         games[gameId].players.push({ ws, name: playerName, isAI });
         ws.send(JSON.stringify({ type: 'JOINED', gameId }));
       break;
+      case "SUBMIT_GUESS": {
+        const { gameId, guess} = msg;
+        const game = games[gameId];
+        if(!game) return;
+        if(game.phase !== "GUESS") return;
+        const isCorrect = guess === game.correctAnswer;
+        ws.send(JSON.stringify({
+          type: "GUESS_RESULT",
+          correct: isCorrect,
+          correctAnswer: game.correctAnswer    
+        }));
 
+        game.phase = "ENDED";
+        break;
+      }
       case "START_GAME": {
         if(waitingPlayer){
           const gameId = crypto.randomUUID();
@@ -119,7 +133,7 @@ wss.on('connection', (ws) => {
             }
           }, 5000);
         }
-        break;
+        break
       }
       case 'SEND_MESSAGE': {
         if(game.phase !== "CHAT"){
