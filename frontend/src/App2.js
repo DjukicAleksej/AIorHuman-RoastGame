@@ -73,6 +73,29 @@ export default function App(){
                         <button onClick={startGame}>Start Game</button>
                         </div>
             )}
+
+
+            {phase === "CHAT" && (
+            <div className="card">
+                <div className="chat">
+                    {messages.map((m,i)=> (
+                        <div
+                        key={i}
+                        className={`msg ${m.sender === "AI" ? "ai" : "human"}`}
+                        >
+                            <b>{m.sender}:</b> {m.message}
+                        </div>
+                    ))}
+            </div>
+                    <input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                    placeholder="Drop your roast..."
+                    />
+                    <button onClick={sendMessage}>Send</button>
+                    </div>
+            )}
         </div>
     )
 
