@@ -54,7 +54,7 @@ wss.on('connection', (ws) => {
             phase: "CHAT",
             guessDeadline: Date.now() + GUESS_TIME,
             quesses: {},
-            correctAnswer: "human"
+            correctAnswer: Math.random() < 0.5 ? "ai" : "human"
           };
           setTimeout(() => {
             const game = games[gameId];
@@ -97,7 +97,9 @@ wss.on('connection', (ws) => {
                 messages: [],
                 phase: "CHAT",
                 guessDeadline: Date.now() + GUESS_TIME,
-                quesses: {}
+                quesses: {},
+                phase: "CHAT",
+                correctAnswer: Math.random() < 0.5 ? "ai" : "human"
               };
               setTimeout(() => {
                 const game = games[gameId];
