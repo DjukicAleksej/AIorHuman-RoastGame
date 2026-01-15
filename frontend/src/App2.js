@@ -96,6 +96,16 @@ export default function App(){
                     <button onClick={sendMessage}>Send</button>
                     </div>
             )}
+
+            {phase === "GUESS" && (
+                <div className="card">
+                    <h2>Who was it?</h2>
+                    <div className="guess-buttons">
+                        <button onClick={() => submitGuess("ai")}>🤖 AI</button>
+                        <button onClick={() => submitGuess("human")}>🧍 Human</button>
+                    </div>
+                    </div>
+            )}
         </div>
     )
 
