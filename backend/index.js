@@ -31,7 +31,7 @@ wss.on('connection', (ws) => {
 
   ws.on('message', async (data) => {
     const msg = JSON.parse(data);
-
+    if(game.phase === "ENDED") return;
     switch (msg.type) {
       case 'JOIN_GAME':
         const { gameId, playerName, isAI } = msg;
@@ -40,6 +40,7 @@ wss.on('connection', (ws) => {
         ws.send(JSON.stringify({ type: 'JOINED', gameId }));
       break;
       case "SUBMIT_GUESS": {
+        if(game.phase === "ENDED") return;
         const { gameId, guess} = msg;
         const game = games[gameId];
         if(!game) return;
