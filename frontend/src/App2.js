@@ -24,8 +24,20 @@ export default function App(){
                 setPhase("CHAT");
             }
 
-
-            
-        }
-    })
+            if(data.type === "NEW_MESSAGE"){
+                setMessages((prev) => [...prev,data]);
+            }
+            if(data.type === "GUESS_PHASE"){
+                setPhase("GUESS");
+            }
+            if(data.type === "GUESS_RESULT"){
+                setResult(data);
+                setPhase("RESULT");
+            }            
+        };
+        setWs(socket);
+    }, []);
+    const startGame = () => {
+        ws.send(JSON.stringify({type: "START_GAME"}));
+    };
 }
